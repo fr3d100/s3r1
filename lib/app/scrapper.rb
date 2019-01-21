@@ -5,6 +5,8 @@ require 'nokogiri'
 require 'open-uri'
 require 'json'
 require 'pry'
+require 'google_drive'
+require 'csv'
 
 # ================================
 # 			SCRAPPER CLASS
@@ -59,7 +61,6 @@ end
 # Méthode d'instance afin d'enregistrer les données dans un fichier .JSON
 # ------------------------------------------------------------------------------
 	def save_as_JSON
-		# Création d'un fichier JSON
 		File.open("email.JSON","w") do |f|
     f.write(JSON.pretty_generate(@townhalls))
   end
@@ -75,7 +76,11 @@ end
 # Méthode d'instance afin d'enregistrer les données dans un fichier .csv
 # ------------------------------------------------------------------------------
 	def save_as_csv
-
+		CSV.open("email.csv", "w") do |csv| 
+			@townhalls.to_a.each do|elem|
+				csv << elem
+			end 
+		end
 	end
 
 end
@@ -84,6 +89,7 @@ def perform
 	scrap = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html")
 	scrap.get_data
 	scrap.save_as_JSON
+	scrap.save_as_csv
 end
 
 perform
