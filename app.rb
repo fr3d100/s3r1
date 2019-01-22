@@ -1,8 +1,22 @@
+# ================================
+# 		    	REQUIRE
+# ================================
 require 'bundler'
 Bundler.require
 
 $:.unshift File.expand_path("./../lib", __FILE__)
 require 'app/scrapper'
+
+# ================================
+# 		    	CONSTANTES
+# ================================
+WAITING_MSG_GET_DATA = "> Vos données sont en cours d'extraction, veuillez attendre ... cela peut prendre quelques minutes..."
+WAITING_MSG_SAVE_DATA = "> Vos données ont été récupérees ! Elles sont en cours de sauvegarde dans le format demandé"
+
+
+# ================================
+# 		    	METHODES
+# ================================
 
 # Méthode utilisée afin de choisir le format d'option voulue par l'utilisateur
 def choose_export_format
@@ -37,17 +51,31 @@ end
 def export_data(option)
 	scrap = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html")
 	puts""
-	puts"> Vos données sont en cours d'extraction, veuillez attendre ..."
-	scrap.get_data
-	puts ""
+	
+	
 	if option == 1
 		puts "> Vous avez choisi le format JSON"
+		puts ""
+		puts WAITING_MSG_GET_DATA
+		puts ""
+		scrap.get_data
+		puts WAITING_MSG_SAVE_DATA
 		scrap.save_as_JSON
 	elsif option == 2
 		puts "> Vous avez choisi le format Google Spreadsheet"
+		puts ""
+		puts WAITING_MSG_GET_DATA
+		puts ""
+		scrap.get_data
+		puts WAITING_MSG_SAVE_DATA
 		scrap.save_as_spreadsheet
 	else
 		puts "> Vous avez choisi le format CSV"
+		puts ""
+		puts WAITING_MSG_GET_DATA
+		puts ""
+		scrap.get_data
+		puts WAITING_MSG_SAVE_DATA
 		scrap.save_as_csv
 	end
 	puts ""

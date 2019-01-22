@@ -49,7 +49,9 @@ def get_data
 	doc = Nokogiri::HTML(open(@url))
 	a = doc.css('tr//a.lientxt')
 
-	# a.length.times do |i|
+	# /!\ IMPORTANT /!\ 
+	# Pour que le test du programme ne dure pas 5 mn à chaque fois, j'ai VOLONTAIREMENT limité l'extraction à 10 mairies.
+	# Afin de collecter l'ensemble des données, il te suffit de remplacer la ligne suivante par "a.length.times do |i|"
 	10.times do |i|
 		name_town = a[i].text 
     url_suffix = a[i]['href'].delete_prefix(".")
@@ -79,15 +81,13 @@ end
 		ws[1,1] = "Liste des coordonnées des mairies du 95"
 		ws[2,1] = "Mairie"
 		ws[2,2] = "Email"
-		ws.save
 		i = 3
 		@townhalls.each do |key, value| 
 			ws[i,1] = key
 			ws[i,2] = value
-			ws.save
 			i += 1
 		end
-
+		ws.save
 		puts "Les résultats ont été enregistrées dans la Google Spreadsheet suivante :"
 		puts 'https://docs.google.com/spreadsheets/d/1lPJ_i18h4x0YKqVWLM4aXKqYqrctVGsC4ed_PaY_pPY/edit?usp=sharing'
 	end
