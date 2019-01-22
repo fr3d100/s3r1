@@ -34,13 +34,13 @@ class Scrapper
 # 		Méthodes d'instance
 # --------------------------------
 
-# Méthode des données d'une mairies sur la base de son URL
-# ------------------------------------------------------------------------------
-def get_townhall_email(townhall_url) 
-	doc = Nokogiri::HTML(open(townhall_url))
-  mail = doc.xpath('/html/body/div/main/section[2]/div/table/tbody/tr[4]/td[2]').text
-	return mail
-end
+	# Méthode des données d'une mairies sur la base de son URL
+	# ------------------------------------------------------------------------------
+	def get_townhall_email(townhall_url) 
+		doc = Nokogiri::HTML(open(townhall_url))
+	  mail = doc.xpath('/html/body/div/main/section[2]/div/table/tbody/tr[4]/td[2]').text
+		return mail
+	end
 
 
 # Méthode de récupération des données dans un hash
@@ -61,36 +61,39 @@ def get_data
 end
 
 
-# Méthode d'instance afin d'enregistrer les données dans un fichier .JSON
-# ------------------------------------------------------------------------------
+	# Méthode d'instance afin d'enregistrer les données dans un fichier .JSON
+	# ------------------------------------------------------------------------------
 	def save_as_JSON
 		File.open("db/email.JSON","w") do |f|
-    f.write(JSON.pretty_generate(@townhalls))
-  end
+	  f.write(JSON.pretty_generate(@townhalls))
+	end
 
 	end
 
-# Méthode d'instance afin d'enregistrer les données dans une Google Spreadsheet
-# ------------------------------------------------------------------------------
+	# Méthode d'instance afin d'enregistrer les données dans une Google Spreadsheet
+	# ------------------------------------------------------------------------------
 	def save_as_spreadsheet
-	# credentials = Google::Auth::UserRefreshCredentials.new(
- #  client_id: ENV["GOOGLE_API_CLIENT_ID"],
- #  client_secret: ENV["GOOGLE_API_CLIENT_SECRET"],
- #  scope: [
- #    "https://www.googleapis.com/auth/drive",
- #    "https://spreadsheets.google.com/feeds/",
- #  ],
- #  redirect_uri: "http://google.com/")
+		session = GoogleDrive::Session.from_config("config.json")
+		ws = session.spreadsheet_by_key("1lPJ_i18h4x0YKqVWLM4aXKqYqrctVGsC4ed_PaY_pPY").worksheets[0]
 
-	# auth_url = credentials.authorization_uri
+		ws[1,1] = "Liste des coordonnées des mairies du 95"
+		ws[2,1] = "Mairie"
+		ws[2,2] = "Email"
+		ws.save
+		i = 3
+		@townhalls.each do |key, value| 
+			ws[i,1] = key
+			ws[i,2] = value
+			ws.save
+			i += 1
+		end
 
-
-	session = GoogleDrive::Session.from_config("config.json")
-	
+		puts "Les résultats ont été enregistrées dans la Google Spreadsheet suivante :"
+		puts 'https://docs.google.com/spreadsheets/d/1lPJ_i18h4x0YKqVWLM4aXKqYqrctVGsC4ed_PaY_pPY/edit?usp=sharing'
 	end
 
-# Méthode d'instance afin d'enregistrer les données dans un fichier .csv
-# ------------------------------------------------------------------------------
+	# Méthode d'instance afin d'enregistrer les données dans un fichier .csv
+	# ------------------------------------------------------------------------------
 	def save_as_csv
 		CSV.open("db/email.csv", "w") do |csv| 
 			@townhalls.to_a.each do|elem|
@@ -101,11 +104,10 @@ end
 
 end
 
-# def perform
-# 	scrap = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html")
-# 	scrap.get_data
-# 	scrap.save_as_JSON
-# 	scrap.save_as_csv
-# end
+def perform
+	# scrap = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html")
+	# scrap.get_data
+	# scrap.save_as_spreadsheet
+end
 
-# perform
+perform
