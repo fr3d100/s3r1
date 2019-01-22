@@ -5,8 +5,12 @@ require 'nokogiri'
 require 'open-uri'
 require 'json'
 require 'pry'
-require 'google_drive'
+require "google_drive"
 require 'csv'
+require 'dotenv'
+
+# DOTENV
+Dotenv.load('.env')
 
 # ================================
 # 			SCRAPPER CLASS
@@ -46,11 +50,10 @@ def get_data
 	a = doc.css('tr//a.lientxt')
 
 	# a.length.times do |i|
-	2.times do |i|
+	10.times do |i|
 		name_town = a[i].text 
     url_suffix = a[i]['href'].delete_prefix(".")
     url_town = "http://annuaire-des-mairies.com#{url_suffix}"
-    puts url_town
     mail_town = get_townhall_email(url_town)
     townhall_hash = {name_town => mail_town}
     @townhalls[name_town] = mail_town
@@ -61,7 +64,7 @@ end
 # Méthode d'instance afin d'enregistrer les données dans un fichier .JSON
 # ------------------------------------------------------------------------------
 	def save_as_JSON
-		File.open("email.JSON","w") do |f|
+		File.open("db/email.JSON","w") do |f|
     f.write(JSON.pretty_generate(@townhalls))
   end
 
@@ -70,13 +73,26 @@ end
 # Méthode d'instance afin d'enregistrer les données dans une Google Spreadsheet
 # ------------------------------------------------------------------------------
 	def save_as_spreadsheet
+	# credentials = Google::Auth::UserRefreshCredentials.new(
+ #  client_id: ENV["GOOGLE_API_CLIENT_ID"],
+ #  client_secret: ENV["GOOGLE_API_CLIENT_SECRET"],
+ #  scope: [
+ #    "https://www.googleapis.com/auth/drive",
+ #    "https://spreadsheets.google.com/feeds/",
+ #  ],
+ #  redirect_uri: "http://google.com/")
 
+	# auth_url = credentials.authorization_uri
+
+
+	session = GoogleDrive::Session.from_config("config.json")
+	
 	end
 
 # Méthode d'instance afin d'enregistrer les données dans un fichier .csv
 # ------------------------------------------------------------------------------
 	def save_as_csv
-		CSV.open("email.csv", "w") do |csv| 
+		CSV.open("db/email.csv", "w") do |csv| 
 			@townhalls.to_a.each do|elem|
 				csv << elem
 			end 
@@ -85,11 +101,11 @@ end
 
 end
 
-def perform
-	scrap = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html")
-	scrap.get_data
-	scrap.save_as_JSON
-	scrap.save_as_csv
-end
+# def perform
+# 	scrap = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html")
+# 	scrap.get_data
+# 	scrap.save_as_JSON
+# 	scrap.save_as_csv
+# end
 
-perform
+# perform
