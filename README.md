@@ -2,9 +2,9 @@ Bienvenue sur mon super projet Ruby
 ======
 
 Ce programme va te permettre de très simplement exporter les coordonnées mail de toutes les mairies du 95 !
-Vous pourrez choisir parmis 3 formats d'export : JSON, Google Spreadsheet ou CSV
+Tu pourras choisir parmi 3 formats d'export : JSON, Google Spreadsheet ou CSV
 
-NB : Les informations proviennent de l'[adresse suivante](http://annuaire-des-mairies.com/val-d-oise.html)
+_NB : Les informations proviennent de l'[adresse suivante](http://annuaire-des-mairies.com/val-d-oise.html)_
  
 Fred :sunglasses:
 
