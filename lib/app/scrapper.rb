@@ -103,11 +103,3 @@ end
 	end
 
 end
-
-def perform
-	# scrap = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html")
-	# scrap.get_data
-	# scrap.save_as_spreadsheet
-end
-
-perform
